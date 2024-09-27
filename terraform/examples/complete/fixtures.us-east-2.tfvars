@@ -1,8 +1,8 @@
-region = "us-east-2"
+region = "sa-east-1"
 
-availability_zones = ["us-east-2a", "us-east-2b"]
+availability_zones = ["sa-east-1a"]
 
-namespace = "eg"
+namespace = "demo"
 
 stage = "test"
 
@@ -13,15 +13,15 @@ oidc_provider_enabled = true
 
 enabled_cluster_log_types = ["audit"]
 
-cluster_log_retention_period = 7
+cluster_log_retention_period = 1
 
 instance_types = ["t3.small"]
 
-desired_size = 2
+desired_size = 1
 
-max_size = 3
+max_size = 1
 
-min_size = 2
+min_size = 1
 
 kubernetes_labels = {}
 
