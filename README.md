@@ -11,7 +11,7 @@ Este proyecto contiene una estrategia CI/CD en github y su infraestructura para 
 
 Para correr el pipeline tiene que ocurrir un push o un pull request desde un Branch `feature`, Este creara una imagen con docker el proyecto en `cat-app` y luego hará push a la imagen hacia la registry en AWS. Consecutivamente, se disparará el work de deploy y luego loguearse en el ECK, hará un `kubectl apply` al archivo deployment con la ultima imagen subida a la registry de AWS. 
 
-
+Para desplegar la infraestructura en AWS solo requiere que clones el proyecto y logues tu consola con AWS. Luego en la ruta del proyecto terraform/examples/complete hacer `terraform init`, `terraform plan var-file="fixtures.us-east-2.tfvars"`, y un `terraform apply var-file="fixtures.us-east-2.tfvars"`
 
 
 nota: las credenciales del runner solo permiten que ESTE y solo este repositoria haga push a la registry
