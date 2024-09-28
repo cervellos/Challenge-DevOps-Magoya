@@ -1,75 +1,25 @@
-¡Claro! A continuación te dejo una aplicación sencilla en Python que puedes dockerizar y desplegar en Kubernetes. Esta aplicación es un servicio web básico que devuelve un mensaje en formato JSON. 
+# Proyecto de CI/CD - Github y kubernetes
 
-### Paso 1: Crear la Aplicación
+Este proyecto contiene una estrategia CI/CD en github y su infraestructura para AWS para el desafío MAGOYA.
 
+- Usa un Terraform para aprovisionar recursos en AWS. Los recursos incluyen grupos de recursos, redes virtuales, subredes, IP públicas, clústeres de Kubernetes (ECK), declarado en la carpeta `Terraform`
+- Contiene una aplicación simple en python que muestras un `Hello World!`, esta declarado en la carpeta `Cat-app`
+- contiene un archivo `deployment` y un `service` para desplegar el contenedor con la aplicación en kubernetes
+- contiene un Yaml con un pipeline para github que hace un `docker build` a la aplicación presente en `/Cat-app`,construye una imagen y hace push a la resgistry en AWS
 
+### El flujo del pipeline
 
-### Paso 2: Crear el Dockerfile
-
-
-
-### Paso 3: Construir y Ejecutar el Contenedor
-
-Construye la imagen Docker:
-
-```bash
-docker build -t mi-aplicacion:latest .
-```
-
-Ejecuta el contenedor:
-
-```bash
-docker run -p 5000:5000 mi-aplicacion:latest
-```
-
-Visita `http://localhost:5000` en tu navegador y deberías ver el mensaje JSON.
-
-### Paso 4: Crear Archivos de Kubernetes
+Para correr el pipeline tiene que ocurrir un push o un pull request desde un Branch `feature`, Este creara una imagen con docker el proyecto en `cat-app` y luego hará push a la imagen hacia la registry en AWS. Consecutivamente, se disparará el work de deploy y luego loguearse en el ECK, hará un `kubectl apply` al archivo deployment con la ultima imagen subida a la registry de AWS. 
 
 
-### Paso 5: Subir la Imagen a Docker Hub
 
-1. Inicia sesión en Docker Hub:
-   ```bash
-   docker login
-   ```
 
-2. Etiqueta tu imagen:
-   ```bash
-   docker tag mi-aplicacion:latest tu_usuario_dockerhub/mi-aplicacion:latest
-   ```
+nota: las credenciales del runner solo permiten que ESTE y solo este repositoria haga push a la registry
 
-3. Sube la imagen:
-   ```bash
-   docker push tu_usuario_dockerhub/mi-aplicacion:latest
-   ```
-
-### Paso 6: Desplegar en Kubernetes
-
-1. Aplica el archivo de despliegue:
-   ```bash
-   kubectl apply -f k8s/deployment.yaml
-   ```
-
-2. Aplica el archivo del servicio:
-   ```bash
-   kubectl apply -f k8s/service.yaml
-   ```
-
-3. Verifica el estado de tu despliegue:
-   ```bash
-   kubectl get deployments
-   kubectl get services
-   ```
-
-Después de un momento, deberías obtener una dirección IP externa del servicio. Usa esa IP para acceder a tu aplicación en el navegador.
-
-### Configurar Secretos en GitHub
-
-Ve a tu repositorio en GitHub y navega a Settings > Secrets and variables > Actions. Crea los siguientes secretos:
-
-    AWS_ACCESS_KEY_ID: Tu ID de clave de acceso de AWS.
-    AWS_SECRET_ACCESS_KEY: Tu clave de acceso secreta de AWS.
-    ECR_REGISTRY: La URL de tu registro de Amazon ECR (por ejemplo, 123456789012.dkr.ecr.us-west-2.amazonaws.com).
-
-# Challenge-DevOps-Magoya
+### Deuda técnica
+- pruebas automáticas tanto en el pipeline, como un test unitario cuando se crea la imagen en el dockerfile
+- adaptar el proyecto Kubernetes
+- limpiar y adaptar el terraform
+- que el ECR esté declarado en terraform
+- que la parte del despliegue la realize ARGO-CD. kubernetes no permite la comunicacion del runner del pipeline al cluster de kubernetes, necesita un hotfix o usar otra via para el despliegue
+- falto la integracion de prometeus y grafana
